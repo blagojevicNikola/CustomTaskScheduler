@@ -1,0 +1,6 @@
+C:\Users\win7\source\repos\Practice\MySched\bin\Debug\MySched.dll
+C:\Users\win7\source\repos\Practice\MySched\bin\Debug\MySched.pdb
+C:\Users\win7\source\repos\Practice\MySched\obj\Debug\MySched.csproj.AssemblyReference.cache
+C:\Users\win7\source\repos\Practice\MySched\obj\Debug\MySched.csproj.CoreCompileInputs.cache
+C:\Users\win7\source\repos\Practice\MySched\obj\Debug\MySched.dll
+C:\Users\win7\source\repos\Practice\MySched\obj\Debug\MySched.pdb

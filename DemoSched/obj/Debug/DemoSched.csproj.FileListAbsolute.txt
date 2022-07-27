@@ -1,0 +1,10 @@
+C:\Users\win7\source\repos\Practice\DemoSched\bin\Debug\DemoSched.exe.config
+C:\Users\win7\source\repos\Practice\DemoSched\bin\Debug\DemoSched.exe
+C:\Users\win7\source\repos\Practice\DemoSched\bin\Debug\DemoSched.pdb
+C:\Users\win7\source\repos\Practice\DemoSched\obj\Debug\DemoSched.csproj.AssemblyReference.cache
+C:\Users\win7\source\repos\Practice\DemoSched\obj\Debug\DemoSched.csproj.CoreCompileInputs.cache
+C:\Users\win7\source\repos\Practice\DemoSched\obj\Debug\DemoSched.csproj.CopyComplete
+C:\Users\win7\source\repos\Practice\DemoSched\obj\Debug\DemoSched.exe
+C:\Users\win7\source\repos\Practice\DemoSched\obj\Debug\DemoSched.pdb
+C:\Users\win7\source\repos\Practice\DemoSched\bin\Debug\MyTaskScheduler.dll
+C:\Users\win7\source\repos\Practice\DemoSched\bin\Debug\MyTaskScheduler.pdb

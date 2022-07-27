@@ -1,0 +1,446 @@
+﻿<Window x:Class="WPFScheduler.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPFScheduler"
+        mc:Ignorable="d"
+        Background="#d3d3d3"
+        WindowStartupLocation="CenterScreen"
+        Title="MainWindow" Height="760" Width="1244"
+        >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="TaskScheduler" 
+                   Margin="0,7,0,7"
+                   TextAlignment="Center"
+                   FontWeight="Bold"
+                   FontSize="36" 
+                   Grid.Row="0"
+                   Foreground="#292929"/>
+        
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel>
+                <Label Content="Active Tasks"
+                       Margin="30,0,0,5"
+                       FontFamily="Ubuntu"
+                       FontSize="20"
+                       FontWeight="SemiBold"/>
+                
+                <ItemsControl 
+                      Grid.Column="0" 
+                      ItemsSource="{Binding Scheduler.ObsActiveTasks}"
+                      HorizontalAlignment="Left"
+                      Width="785" 
+                      Height="130"
+                      Margin="30,0,0,1" 
+                      Grid.ColumnSpan="2"
+                      Background="#ededed">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="5,5,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0" 
+                                        Background="#31b533"
+                                        Height="25" 
+                                        Width="60"
+                                        CornerRadius="12">
+                                    <Label Content="{Binding Name,FallbackValue=ime}"
+                                           FontSize="14"
+                                           FontWeight="Bold"
+                                           VerticalAlignment ="Center"
+                                           HorizontalAlignment="Center"
+                                           Padding="0"/>
+                                </Border>
+                                <TextBlock Grid.Column="1"
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Margin="5,0,0,0">
+                                    <Run Text="Priority:"/>
+                                    <Run Text="{Binding Priority,FallbackValue=1}"/>
+                                </TextBlock>
+                                <TextBlock Grid.Column="2"
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Center"
+                                       Margin="5,0,0,0">
+                                    <Run Text="Parallelism:"/>
+                                    <Run Text="{Binding DegreeOfParallelism, FallbackValue=1}"/>
+                                </TextBlock>
+
+                                <ProgressBar Width="160"
+                                             Height="25"
+                                             Margin="20,0,5,0"
+                                             Maximum="100"
+                                             Minimum="0.0"
+                                             Value="{Binding Progress}"
+                                             Grid.Column="3"
+                                             Foreground="Green">
+                                    
+                                </ProgressBar>
+
+                                <Button Grid.Column="4"
+                                        x:Name="resumeButton"
+                                        HorizontalAlignment="Right"
+                                        Margin="0,0,5,0"
+                                        Height="20"
+                                        Width="20"
+                                        Content="R"
+                                        FontSize="15"
+                                        Padding="0"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        Click="resumeButton_Click">
+
+                                </Button>
+
+                                <Button Grid.Column="5"
+                                        x:Name="pauseButton"
+                                        HorizontalAlignment="Right"
+                                        Margin="0,0,5,0"
+                                        Height="20"
+                                        Width="20"
+                                        Content="P"
+                                        FontSize="15"
+                                        Padding="0"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        Click="pauseButton_Click">
+
+                                </Button>
+
+                                <Button Grid.Column="6"
+                                        x:Name="cancleButton"
+                                        HorizontalAlignment="Right"
+                                        Margin="0,0,5,0"
+                                        Height="20"
+                                        Width="20"
+                                        Content="II"
+                                        FontSize="15"
+                                        Padding="0"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Click="cancleButton_Click">
+                                   
+                                </Button>
+                                
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                
+                <Label Content="In Queue"
+                       Margin="30,0,0,5"
+                       FontFamily="Ubuntu"
+                       FontSize="20"
+                       FontWeight="SemiBold"/>
+
+                <ItemsControl 
+                      ItemsSource="{Binding Scheduler.ObsInQueue}"
+                      Grid.Column="0" 
+                      HorizontalAlignment="Left"
+                      Width="785" 
+                      Height="310"
+                      Margin="30,0,0,1" 
+                      Grid.ColumnSpan="2"
+                      Background="#ededed">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="5,5,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0" 
+                                        Background="#ffc800"
+                                        Height="25" 
+                                        Width="60"
+                                        CornerRadius="12">
+                                    <Label Content="{Binding Name,FallbackValue=ime}"
+                                           FontSize="14"
+                                           FontWeight="Bold"
+                                           VerticalAlignment ="Center"
+                                           HorizontalAlignment="Center"
+                                           Padding="0"/>
+                                </Border>
+                                <TextBlock Grid.Column="1"
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Margin="5,0,0,0">
+                                    <Run Text="Priority:"/>
+                                    <Run Text="{Binding Priority,FallbackValue=1}"/>
+                                </TextBlock>
+                                <TextBlock Grid.Column="2"
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Center"
+                                       Margin="5,0,0,0">
+                                    <Run Text="Parallelism:"/>
+                                    <Run Text="{Binding DegreeOfParallelism, FallbackValue=1}"/>
+                                </TextBlock>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+            </StackPanel>
+            
+
+            <StackPanel Grid.Column="1"
+                        Width="300"
+                        Margin="0,0,30,0">
+                <Grid       Margin="0,0,0,5">
+                    <Label Content="Ready Tasks"
+                       FontFamily="Ubuntu"
+                       FontWeight="SemiBold"
+                       FontSize="20"
+                       ></Label>
+                    <Button 
+                        x:Name="addButton"
+                        Content="+"
+                        HorizontalAlignment="Right"
+                        Margin="140,0,0,0"
+                        Height="30"
+                        Width="30"
+                        Click="addButton_Click"
+                        Background="white"
+                        Foreground="#292929"
+                        FontWeight="SemiBold"
+                        BorderBrush="Transparent"
+                        ></Button>
+                </Grid>
+                <ItemsControl x:Name="istemControl"
+                              Width="auto"
+                              Height="480"
+                              ItemsSource="{Binding Subscribers}"
+                              Background="#ededed">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="5,5,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0"
+                                        CornerRadius="12"
+                                        Background="#2483d6"
+                                        Height="25"
+                                        Width="60">
+                                    <Label Content="{Binding Name}"
+                                       FontFamily="Ubuntu"
+                                       FontSize="15"
+                                       FontWeight="Bold"
+                                       Margin="5,0,0,0"/>
+                                </Border>
+
+                                <TextBlock
+                                       Grid.Column="1"
+                                       FontSize="15"
+                                       FontFamily="Ubuntu"
+                                       FontWeight="Bold"
+                                       Margin="5,0,0,0"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Padding="0">
+                                    <Run Text="("/> 
+                                    <Run Text="{Binding Priority, FallbackValue=1}"/>
+                                    <Run Text=","/>
+                                </TextBlock>
+
+                                <TextBlock Grid.Column="2"
+                                           FontSize="15"
+                                           FontFamily="Ubuntu"
+                                           FontWeight="Bold"
+                                           Margin="5,0,0,0"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Padding="0">
+                                    <Run Text="{Binding DegreeOfParallelism, FallbackValue=1}"/>
+                                    <Run Text=")"/>
+                                </TextBlock>
+                                
+                                <Button Content=">"
+                                        Width="20"
+                                        Height="20"
+                                        Grid.Column="3"
+                                        Margin="0,0,10,0"
+                                        HorizontalAlignment="Right"
+                                        Click="Button_Click"
+                                        Background="White"
+                                        Foreground="Green"
+                                        FontWeight="Bold"
+                                        />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    
+                </ItemsControl>
+                <!--<ListView
+                    x:Name="listView"
+                    ItemsSource="{Binding Subscribers}"
+                    Width="auto"
+                    Height="500">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Name}"
+                                           Margin="20,0,0,0"
+                                           VerticalAlignment="Center"></TextBlock>
+                                <Button Content="Start"
+                                        Margin="200,0,20,0"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>-->
+            </StackPanel>
+            
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+
+            <ComboBox Width="200"
+                      Height="30"
+                      Margin="30,10,0,0"
+                      Grid.Row="0"
+                      Grid.Column="0"
+                      VerticalContentAlignment="Center"
+                      HorizontalContentAlignment="Center"
+                      FontFamily="Ubuntu"
+                      FontSize="15"
+                      FontWeight="Medium"
+                      Background="white"
+                >
+                <ComboBoxItem FontFamily="Ubuntu"
+                              FontSize="15"
+                              FontWeight="Medium"
+                              >Preemptive</ComboBoxItem>
+                <ComboBoxItem FontFamily="Ubuntu"
+                              FontSize="15"
+                              FontWeight="Medium"
+                              >Non-Preemptive</ComboBoxItem>
+            </ComboBox>
+            
+            <Label Content="Core Number"
+                   Margin="60,10,0,10"
+                   FontSize="20"
+                   FontWeight="SemiBold"
+                   Grid.Row="0"
+                   Grid.Column="1"/>
+
+            <Label Content="Max tasks"
+                   Margin="60,0,0,0"
+                   FontSize="20"
+                   FontWeight="SemiBold"
+                   Grid.Row="1"
+                   Grid.Column="1"/>
+
+            <TextBox Grid.Row="0"
+                     FontSize="17"
+                     Margin="20,10,0,0"
+                     Width="80"
+                     Height="35"
+                     Grid.Column="2"/>
+
+            <TextBox Grid.Row="1"
+                     FontSize="17"
+                     Margin="20,0,0,0"
+                     Width="80"
+                     Height="35"
+                     Grid.Column="2"/>
+
+            <Button x:Name="startSchedulerButton"
+                    Content="Start"
+                    Grid.Column="3"
+                    Grid.Row="0"
+                    Width="120"
+                    Height="40"
+                    HorizontalAlignment="Left"
+                    Margin="165,5,0,5"
+                    FontSize="20"
+                    FontWeight="Bold"
+                    Background="White"
+                    BorderBrush="Transparent"
+                    Click="startSchedulerButton_Click">
+                
+            </Button>
+
+            <Button x:Name="stopSchedulerButton"
+                    Content="Stop"
+                    Grid.Column="3"
+                    Grid.Row="1"
+                    Width="120"
+                    Height="40"
+                    HorizontalAlignment="Left"
+                    Margin="165,5,0,5"
+                    FontSize="20"
+                    FontWeight="Bold"
+                    Background="White"
+                    BorderBrush="Transparent"
+                    Click="stopSchedulerButton_Click">
+
+            </Button>
+
+
+            <Button x:Name="runButton"
+                    Content="Run all tasks"
+                    Grid.Column="4"
+                    Grid.Row= "0"
+                    Margin="0,0,30,5"
+                    Width="110"
+                    Height="30"
+                    FontSize="15"
+                    Background="white"
+                    Foreground="#292929"
+                    FontWeight="SemiBold"
+                    Click="runButton_Click"
+                    BorderBrush="Transparent"
+                    ></Button>
+                    
+
+        </Grid>
+    </Grid>
+</Window>

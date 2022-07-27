@@ -1,0 +1,6 @@
+C:\Users\win7\source\repos\Practice\MyTaskScheduler\bin\Debug\MyTaskScheduler.dll
+C:\Users\win7\source\repos\Practice\MyTaskScheduler\bin\Debug\MyTaskScheduler.pdb
+C:\Users\win7\source\repos\Practice\MyTaskScheduler\obj\Debug\MyTaskScheduler.csproj.AssemblyReference.cache
+C:\Users\win7\source\repos\Practice\MyTaskScheduler\obj\Debug\MyTaskScheduler.csproj.CoreCompileInputs.cache
+C:\Users\win7\source\repos\Practice\MyTaskScheduler\obj\Debug\MyTaskScheduler.dll
+C:\Users\win7\source\repos\Practice\MyTaskScheduler\obj\Debug\MyTaskScheduler.pdb
