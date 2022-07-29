@@ -48,12 +48,19 @@
     <Compile Include="MyResource.cs" />
     <Compile Include="MyTask.cs" />
     <Compile Include="MyTs.cs" />
+    <Compile Include="NewTask.cs" />
     <Compile Include="Pomocna.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MyTaskScheduler\MyTaskScheduler.csproj">
+      <Project>{43FFE49B-C949-423D-AFAF-5FE1800AB4ED}</Project>
+      <Name>MyTaskScheduler</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

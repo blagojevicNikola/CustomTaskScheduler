@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyTaskScheduler;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -60,12 +61,23 @@ namespace Practice
             ////Console.WriteLine("Sve je zavrseno!");
             //Console.ReadLine();
 
-            Klasa k = new Klasa();
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            k.parallelPhotoBlur();
-            s.Stop();
-            Console.WriteLine("Gotovo\nVrijeme izvrsavanja je:{0}s", s.ElapsedMilliseconds);
+            //Klasa k = new Klasa();
+            //Stopwatch s = new Stopwatch();
+            //s.Start();
+            //k.parallelPhotoBlur();
+            //s.Stop();
+            //Console.WriteLine("Gotovo\nVrijeme izvrsavanja je:{0}s", s.ElapsedMilliseconds);
+
+            Scheduler s = new Scheduler(2, 2, Scheduler.Mode.PREEMPITVE);
+            UserTask a = new NewTask("1", 2, 1);
+            UserTask b = new NewTask("2", 2, 1);
+            UserTask c = new NewTask("3", 3, 1);
+            s.subscribeUserTask(a);
+            Thread.Sleep(1000);
+            s.subscribeUserTask(b);
+            Thread.Sleep(1000);
+            s.subscribeUserTask(c);
+
             Console.ReadLine();
         }
 

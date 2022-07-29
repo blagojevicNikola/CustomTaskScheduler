@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MyTaskScheduler
 {
-    public class UserTask: INotifyPropertyChanged
+    public abstract class UserTask: INotifyPropertyChanged
     {
         public enum TaskState
         {
@@ -20,14 +20,14 @@ namespace MyTaskScheduler
             READY
         }
 
-        private CancellationTokenSource cancleTokenSource = new CancellationTokenSource();
-        private EventWaitHandle pauseHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
+        protected CancellationTokenSource cancleTokenSource = new CancellationTokenSource();
+        protected EventWaitHandle pauseHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
         public Thread handler;
-        private int priority;
+        protected int priority;
         private int tempPriority = 0;
         private int degreeOfParallelism;
-        private string name;
-        private bool paused = false;
+        protected string name;
+        protected bool paused = false;
         private int cancellationTimeout;
         private double _progress = 0.0;
         private volatile bool preempted = false;
@@ -36,7 +36,7 @@ namespace MyTaskScheduler
         private List<MyResource> resourceList;
         private List<MyResource> lockedResourceList = new List<MyResource>();
         private Dictionary<MyResource, int> boostedPriorities = new Dictionary<MyResource, int>();
-        IProgress<int> progressOfTask;
+        protected IProgress<double> progressOfTask;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -81,7 +81,7 @@ namespace MyTaskScheduler
                 OnPropertyChanged();
             } }
 
-        public TaskState UserTaskState { get; set; } = TaskState.READY;
+        public TaskState UserTaskState { get; set; }
 
         public UserTask(string name, int priority, int degreeOfParallelism)
         {
@@ -89,7 +89,8 @@ namespace MyTaskScheduler
             this.priority = priority;
             this.degreeOfParallelism = degreeOfParallelism;
             resourceList = new List<MyResource>();
-            progressOfTask = new Progress<int>((i) => Progress = i);
+            progressOfTask = new Progress<double>((i) => Progress = i);
+            UserTaskState = TaskState.READY;
         }
 
         public UserTask(string name, int priority, int degreeOfParallelism, int cancellationTimeout)
@@ -99,48 +100,50 @@ namespace MyTaskScheduler
             this.degreeOfParallelism = degreeOfParallelism;
             resourceList = new List<MyResource>();
             this.cancellationTimeout = cancellationTimeout;
+            UserTaskState = TaskState.READY;
+
         }
 
-        public void algoritam()
-        {
-            Console.WriteLine("=====TASK {0} POCINJE=====", name);
-            CancellationToken token = cancleTokenSource.Token;
-            ParallelOptions options = new ParallelOptions();
-            options.MaxDegreeOfParallelism = degreeOfParallelism;
-            //Parallel.For(0, 7, options, (a) =>
+        public abstract void algoritam();
+        //{
+            //Console.WriteLine("=====TASK {0} POCINJE=====", name);
+            //CancellationToken token = cancleTokenSource.Token;
+            //ParallelOptions options = new ParallelOptions();
+            //options.MaxDegreeOfParallelism = degreeOfParallelism;
+            ////Parallel.For(0, 7, options, (a) =>
+            ////{
+            ////    if (paused)
+            ////    {
+            ////        pauseHandle.WaitOne();
+            ////    }
+            ////    lock (lck)
+            ////    {
+            ////        Console.WriteLine("Task {0} se izvrsava na Threadu: {1}", name, Thread.CurrentThread.ManagedThreadId);
+            ////    }
+            ////    Thread.Sleep(2000);
+            ////   });
+            //for (int i = 0; i < 7; i++)
             //{
             //    if (paused)
             //    {
             //        pauseHandle.WaitOne();
             //    }
-            //    lock (lck)
+            //    if (token.IsCancellationRequested)
             //    {
-            //        Console.WriteLine("Task {0} se izvrsava na Threadu: {1}", name, Thread.CurrentThread.ManagedThreadId);
+            //        break;
             //    }
+            //    Console.WriteLine("Task {0} | Prioritet {1} prije zakljucavanja!", name, priority, Thread.CurrentThread.ManagedThreadId);
+            //    lockResourceByIndex(0);
+            //    //lockResourceByIndex(1);
+            //    //Console.WriteLine("Task {0} je zakljucao resurs!", name);
             //    Thread.Sleep(2000);
-            //   });
-            for (int i = 0; i < 7; i++)
-            {
-                if (paused)
-                {
-                    pauseHandle.WaitOne();
-                }
-                if (token.IsCancellationRequested)
-                {
-                    break;
-                }
-                Console.WriteLine("Task {0} | Prioritet {1} prije zakljucavanja!", name, priority, Thread.CurrentThread.ManagedThreadId);
-                lockResourceByIndex(0);
-                //lockResourceByIndex(1);
-                //Console.WriteLine("Task {0} je zakljucao resurs!", name);
-                Thread.Sleep(2000);
-                Console.WriteLine("Task {0} | Prioritet {1} se izvrsava na Threadu: {2}", name, priority, Thread.CurrentThread.ManagedThreadId);
-                //unlockResourceByIndex(1);
-                unlockResourceByIndex(0);
-                progressOfTask.Report((100/7)*(i+1));
-            }
-            Console.WriteLine("-----KRAJ TASKA {0}-----", name); ;
-        }
+            //    Console.WriteLine("Task {0} | Prioritet {1} se izvrsava na Threadu: {2}", name, priority, Thread.CurrentThread.ManagedThreadId);
+            //    //unlockResourceByIndex(1);
+            //    unlockResourceByIndex(0);
+            //    progressOfTask.Report((100/7)*(i+1));
+            //}
+            //Console.WriteLine("-----KRAJ TASKA {0}-----", name); ;
+        //}
 
         public void resetUserTask()
         {
@@ -149,6 +152,7 @@ namespace MyTaskScheduler
             paused = false;
             preempted = false;
             UserTaskState = TaskState.READY;
+            lockedResourceList.Clear();
         }
 
         public void addResource(MyResource r)

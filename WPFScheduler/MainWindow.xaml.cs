@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WPFScheduler.Tasks;
 
 namespace WPFScheduler
 {
@@ -31,17 +32,17 @@ namespace WPFScheduler
         {
             InitializeComponent();
             Subscribers = new ObservableCollection<UserTask>();
-            UserTask a = new UserTask("IME1", 2, 1);
-            UserTask b = new UserTask("IME2", 2, 1);
-            UserTask c = new UserTask("IME3", 2, 1);
+            UserTask a = new SingleInputCBTask("IME1", 1, 1);
+            UserTask b = new NewTask("IME2", 2, 1);
+            //UserTask c = new NewTask("IME3", 3, 1);
             //MyResource r = new MyResource("fajl 1");
-            a.addResource(MyResource.getResourceByName("fajl1"));
-            b.addResource(MyResource.getResourceByName("fajl1"));
-            c.addResource(MyResource.getResourceByName("fajl1"));
+            a.addResource(MyResource.getResourceByName(@"C:\Users\win7\Desktop\blurInput1.jpg"));
+            //b.addResource(MyResource.getResourceByName("fajl1"));
+            //c.addResource(MyResource.getResourceByName("fajl1"));
             Subscribers.Add(a);
             Subscribers.Add(b);
-            Subscribers.Add(c);
-            _scheduler = new Scheduler(2, 2, Scheduler.Mode.PREEMPITVE);
+            //Subscribers.Add(c);
+            _scheduler = new Scheduler(1, 1, Scheduler.Mode.NON_PREEMPTIVE);
             _scheduler.ObsInQueue = new ObservableCollection<UserTask>();
             _scheduler.ObsActiveTasks = new ObservableCollection<UserTask>();
             Scheduler = _scheduler;

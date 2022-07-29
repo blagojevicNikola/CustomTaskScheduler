@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using WPFScheduler.Tasks;
 
 namespace WPFScheduler
 {
@@ -54,7 +55,7 @@ namespace WPFScheduler
 
         private void addButton_Click(object sender, RoutedEventArgs e)
         {
-            MyTaskScheduler.UserTask temp = new MyTaskScheduler.UserTask(nameTextBox.Text, int.Parse(prioTextBox.Text), int.Parse(coreNumTextBox.Text));
+            MyTaskScheduler.UserTask temp = new NewTask(nameTextBox.Text, int.Parse(prioTextBox.Text), int.Parse(coreNumTextBox.Text));
             string val = (taskTypeComboBox.SelectedItem as ComboBoxItem).Content.ToString();
             switch (val)
             {

@@ -18,6 +18,7 @@ namespace MyTaskScheduler
             PREEMPITVE
         }
 
+       
         private TaskScheduler context = TaskScheduler.FromCurrentSynchronizationContext();
         private List<UserTask> subscribedTasks = new List<UserTask>();
         private LinkedList<UserTask> tasksInQueue = new LinkedList<UserTask>();
@@ -44,7 +45,7 @@ namespace MyTaskScheduler
             }
             this.maxDegreeOfParallelism = maxDegreeOfParallelism;
             this.mode = mode;
-            _maxConcurrentTasks = maxConcurrentTasks;
+            _maxConcurrentTasks = maxConcurrentTasks;  
             InitializeScheduler();
         }
 
@@ -58,28 +59,28 @@ namespace MyTaskScheduler
                     if (activeTasksCount > 0)
                     {
                         int removeNum = 0;
-                        foreach (UserTask u in activeTasks)
-                        {
-                            if (u.getPreemtedFlag())
-                            {
-                                //removeNum += u.getDegreeOfParallelism();
-                                UserTask newTask = new UserTask(u.getName(), u.getPriority(), u.getDegreeOfParallelism());
-                                foreach (MyResource r in u.getAllResources())
-                                {
-                                    newTask.addResource(r);
-                                }
-                                queueTask(newTask);
-                                Task dispatch = new Task(()=> ObsInQueue.Add(newTask));
-                                dispatch.Start(context);
-                                //activeTasksCount--;
-                            }
-                            else if (u.UserTaskState == UserTask.TaskState.COMPLETED)
-                            {
-                                removeNum += u.getDegreeOfParallelism();
-                                activeTasksCount--;
-                            }
-                        }
-                        var tempList = activeTasks.Where((s) => s.UserTaskState == UserTask.TaskState.READY || s.UserTaskState == UserTask.TaskState.COMPLETED || s.UserTaskState == UserTask.TaskState.PREEMTED || s.getPreemtedFlag() == true);
+                        //foreach (UserTask u in activeTasks)
+                        //{
+                        //    if (u.getPreemtedFlag())
+                        //    {
+                        //        //removeNum += u.getDegreeOfParallelism();
+                        //        UserTask newTask = new UserTask(u.getName(), u.getPriority(), u.getDegreeOfParallelism());
+                        //        foreach (MyResource r in u.getAllResources())
+                        //        {
+                        //            newTask.addResource(r);
+                        //        }
+                        //        queueTask(newTask);
+                        //        Task dispatch = new Task(()=> ObsInQueue.Add(newTask));
+                        //        dispatch.Start(context);
+                        //        //activeTasksCount--;
+                        //    }
+                        //    else if (u.UserTaskState == UserTask.TaskState.COMPLETED)
+                        //    {
+                        //        removeNum += u.getDegreeOfParallelism();
+                        //        activeTasksCount--;
+                        //    }
+                        //}
+                        var tempList = activeTasks.Where((s) => s.UserTaskState == UserTask.TaskState.READY || s.UserTaskState == UserTask.TaskState.COMPLETED || s.UserTaskState == UserTask.TaskState.PREEMTED);
                         // activeTasks.RemoveAll((s) => s.UserTaskState == UserTask.TaskState.READY || s.UserTaskState == UserTask.TaskState.COMPLETED || s.UserTaskState == UserTask.TaskState.PREEMTED || s.getPreemtedFlag() == true);
                         foreach(UserTask u in tempList.ToList())
                         {
@@ -89,6 +90,18 @@ namespace MyTaskScheduler
                                 ObsActiveTasks.Remove(u);
                             });
                             t.Start(context);
+                            if(u.UserTaskState==UserTask.TaskState.COMPLETED)
+                            {
+                                removeNum += u.getDegreeOfParallelism();
+                                activeTasksCount--;
+                            }
+                            else if (u.getPreemtedFlag())
+                            {
+                                u.resetUserTask();
+                                queueTask(u);
+                                Task dispatch = new Task(() => ObsInQueue.Add(u));
+                                dispatch.Start(context);
+                            }
                         }
                         //Task t = new Task(() => { 
                         //    foreach (UserTask u in tempList)
@@ -208,7 +221,7 @@ namespace MyTaskScheduler
         {
             if (t.UserTaskState != UserTask.TaskState.READY)
             {
-                //Console.WriteLine("Ime taska {0}", t.getName());
+                Console.WriteLine("Ime taska {0}", t.getName());
                 return false;
             }
             if (activeTasksCount < _maxConcurrentTasks && (t.getDegreeOfParallelism() + activeThreadsCount <= maxDegreeOfParallelism))

@@ -5,3 +5,6 @@ C:\Users\win7\source\repos\Practice\Practice\obj\Debug\Practice.csproj.AssemblyR
 C:\Users\win7\source\repos\Practice\Practice\obj\Debug\Practice.csproj.CoreCompileInputs.cache
 C:\Users\win7\source\repos\Practice\Practice\obj\Debug\Practice.exe
 C:\Users\win7\source\repos\Practice\Practice\obj\Debug\Practice.pdb
+C:\Users\win7\source\repos\Practice\Practice\bin\Debug\MyTaskScheduler.dll
+C:\Users\win7\source\repos\Practice\Practice\bin\Debug\MyTaskScheduler.pdb
+C:\Users\win7\source\repos\Practice\Practice\obj\Debug\Practice.csproj.CopyComplete
