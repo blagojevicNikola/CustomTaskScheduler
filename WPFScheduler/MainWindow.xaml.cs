@@ -32,7 +32,7 @@ namespace WPFScheduler
         {
             InitializeComponent();
             Subscribers = new ObservableCollection<UserTask>();
-            UserTask a = new SingleInputCBTask("IME1", 1, 1);
+            UserTask a = new SingleInputCBTask("IME1", 1, 2);
             UserTask b = new NewTask("IME2", 2, 1);
             //UserTask c = new NewTask("IME3", 3, 1);
             //MyResource r = new MyResource("fajl 1");
@@ -42,7 +42,7 @@ namespace WPFScheduler
             Subscribers.Add(a);
             Subscribers.Add(b);
             //Subscribers.Add(c);
-            _scheduler = new Scheduler(1, 1, Scheduler.Mode.NON_PREEMPTIVE);
+            _scheduler = new Scheduler(2, 1, Scheduler.Mode.NON_PREEMPTIVE);
             _scheduler.ObsInQueue = new ObservableCollection<UserTask>();
             _scheduler.ObsActiveTasks = new ObservableCollection<UserTask>();
             Scheduler = _scheduler;

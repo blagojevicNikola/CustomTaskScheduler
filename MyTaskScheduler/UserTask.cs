@@ -33,7 +33,7 @@ namespace MyTaskScheduler
         private volatile bool preempted = false;
         private readonly object boostLock = new object();
         private readonly object resourceLock = new object();
-        private List<MyResource> resourceList;
+        protected List<MyResource> resourceList;
         private List<MyResource> lockedResourceList = new List<MyResource>();
         private Dictionary<MyResource, int> boostedPriorities = new Dictionary<MyResource, int>();
         protected IProgress<double> progressOfTask;
@@ -89,7 +89,7 @@ namespace MyTaskScheduler
             this.priority = priority;
             this.degreeOfParallelism = degreeOfParallelism;
             resourceList = new List<MyResource>();
-            progressOfTask = new Progress<double>((i) => Progress = i);
+            progressOfTask = new Progress<double>((i) => Progress += i);
             UserTaskState = TaskState.READY;
         }
 

@@ -20,6 +20,12 @@ namespace WPFScheduler.Tasks
 
         public override void algoritam()
         {
+            //In case that there is no resources to be processed algorithm will return right away
+            if(resourceList.Count==0)
+            {
+                return;
+            }
+
             ParallelOptions options = new ParallelOptions();
             options.MaxDegreeOfParallelism = getDegreeOfParallelism();
             lockResourceByIndex(0);
@@ -37,13 +43,17 @@ namespace WPFScheduler.Tasks
                 System.Runtime.InteropServices.Marshal.Copy(ptrFirstPixel, pixels, 0, pixels.Length);
                 int heightInPixels = bd.Height;
                 int widthInBytes = bd.Width * bytesPerPixel;
-                double progresVal = 0.0;
                 Parallel.For(0, heightInPixels, options, (y) =>
                 {
                     int currentLine = y * bd.Stride;
                     //Console.WriteLine("Current line:{0}", currentLine);
                     for (int x = 0; x < widthInBytes; x = x + bytesPerPixel)
                     {
+                        if(paused)
+                        {
+                            pauseHandle.WaitOne();
+                        }
+
                         //int alpha = pixels[currentLine + x];
                         int oldBlue = pixels[currentLine + x];
                         int oldGreen = pixels[currentLine + x + 1];
@@ -85,17 +95,20 @@ namespace WPFScheduler.Tasks
                         //    progresVal = x * y / (heightInPixels * bd.Width) * 100.0F;
                         //}
                     }
-                    if(y%400==0)
+                    if(y%(heightInPixels/100)==0)
                     {
                         int temp = (int)Math.Round(y * 100.0 / heightInPixels);
-                        progressOfTask.Report(temp);
+                        double pom = y / heightInPixels;
+                        progressOfTask.Report(1);
                     }
                 });
 
                 System.Runtime.InteropServices.Marshal.Copy(pixels, 0, ptrFirstPixel, pixels.Length);
                 image.UnlockBits(bd);
 
-                image.Save("output16.jpg");
+                lockResourceByIndex(1);
+
+                image.Save(getResourceByIndex(1).getPath());
             }
             else
             {

@@ -56,6 +56,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Tasks\MultiInputCBTask.cs" />
     <Compile Include="Tasks\NewTask.cs" />
     <Compile Include="Tasks\SingleInputCBTask.cs" />
     <Page Include="AddingTask.xaml">
