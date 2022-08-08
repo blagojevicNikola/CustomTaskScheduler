@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -14,29 +15,33 @@ namespace MyTaskScheduler
         public enum TaskState
         {
             RUNNING,
-            CANCELED,
+            WAITING,
             COMPLETED,
             PREEMTED,
             READY
         }
 
         protected CancellationTokenSource cancleTokenSource = new CancellationTokenSource();
-        protected EventWaitHandle pauseHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
+        protected EventWaitHandle pauseHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
+        protected EventWaitHandle preemptHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
         public Thread handler;
         protected int priority;
         private int tempPriority = 0;
         private int degreeOfParallelism;
         protected string name;
         protected bool paused = false;
-        private int cancellationTimeout;
+        private long cancellationTimeout;
+        private Stopwatch timer = new Stopwatch();
+        private DateTime deadline;
         private double _progress = 0.0;
-        private volatile bool preempted = false;
+        protected volatile bool preempted = false;
         private readonly object boostLock = new object();
         private readonly object resourceLock = new object();
         protected List<MyResource> resourceList;
         private List<MyResource> lockedResourceList = new List<MyResource>();
         private Dictionary<MyResource, int> boostedPriorities = new Dictionary<MyResource, int>();
         protected IProgress<double> progressOfTask;
+        private TaskState _state;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -81,7 +86,7 @@ namespace MyTaskScheduler
                 OnPropertyChanged();
             } }
 
-        public TaskState UserTaskState { get; set; }
+        public TaskState UserTaskState { get { return _state; } set { _state = value; } }
 
         public UserTask(string name, int priority, int degreeOfParallelism)
         {
@@ -90,18 +95,45 @@ namespace MyTaskScheduler
             this.degreeOfParallelism = degreeOfParallelism;
             resourceList = new List<MyResource>();
             progressOfTask = new Progress<double>((i) => Progress += i);
+            this.cancellationTimeout = long.MaxValue;
+            this.deadline = DateTime.MaxValue;
             UserTaskState = TaskState.READY;
         }
 
-        public UserTask(string name, int priority, int degreeOfParallelism, int cancellationTimeout)
+        public UserTask(string name, int priority, int degreeOfParallelism, long cancellationTimeout)
         {
             this.name = name;
             this.priority = priority;
             this.degreeOfParallelism = degreeOfParallelism;
             resourceList = new List<MyResource>();
+            progressOfTask = new Progress<double>((i) => Progress += i);
             this.cancellationTimeout = cancellationTimeout;
+            this.deadline = DateTime.MaxValue;
             UserTaskState = TaskState.READY;
+        }
 
+        public UserTask(string name, int priority, int degreeOfParallelism, long cancellationTimeout, DateTime deadline)
+        {
+            this.name = name;
+            this.priority = priority;
+            this.degreeOfParallelism = degreeOfParallelism;
+            resourceList = new List<MyResource>();
+            progressOfTask = new Progress<double>((i) => Progress += i);
+            this.cancellationTimeout = cancellationTimeout;
+            this.deadline = deadline;
+            UserTaskState = TaskState.READY;
+        }
+
+        public UserTask(string name, int priority, int degreeOfParallelism, DateTime deadline)
+        {
+            this.name = name;
+            this.priority = priority;
+            this.degreeOfParallelism = degreeOfParallelism;
+            resourceList = new List<MyResource>();
+            progressOfTask = new Progress<double>((i) => Progress += i);
+            this.cancellationTimeout = long.MaxValue;
+            this.deadline = deadline;
+            UserTaskState = TaskState.READY;
         }
 
         public abstract void algoritam();
@@ -150,8 +182,8 @@ namespace MyTaskScheduler
             cancleTokenSource = new CancellationTokenSource();
             handler = null;
             paused = false;
-            preempted = false;
-            UserTaskState = TaskState.READY;
+            //preempted = false;
+            UserTaskState = TaskState.WAITING;
             lockedResourceList.Clear();
         }
 
@@ -238,12 +270,15 @@ namespace MyTaskScheduler
         {
             lock (resourceLock)
             {
-                foreach (MyResource r in lockedResourceList)
+                if(lockedResourceList.Count>0)
                 {
-                    removeBoostedPriority(r);
-                    r.unlockResource(this);
+                    foreach (MyResource r in lockedResourceList)
+                    {
+                        removeBoostedPriority(r);
+                        r.unlockResource(this);
+                    }
+                    lockedResourceList.Clear();
                 }
-                lockedResourceList.Clear();
             }
         }
 
@@ -274,6 +309,7 @@ namespace MyTaskScheduler
 
         public void pauseUserTask()
         {
+            pauseHandle.Reset();
             paused = true;
         }
 
@@ -286,14 +322,27 @@ namespace MyTaskScheduler
         public void cancleUserTask()
         {
             cancleTokenSource.Cancel();
+            timer.Stop();
         }
 
         public void preemptUserTask()
         {
-            Console.WriteLine("Ime taska za gasenje {0}", getName());
-                preempted = true;
-                cancleTokenSource.Cancel();
+            //Console.WriteLine("Ime taska za gasenje {0}", getName());
+            preemptHandle.Reset();
+            preempted = true;
+            timer.Stop();
+            UserTaskState = TaskState.PREEMTED;
+            //cancleTokenSource.Cancel();
             
+        }
+
+        public void continueTask()
+        {
+            preempted = false;
+            UserTaskState = TaskState.RUNNING;
+            timer.Start();
+            preemptHandle.Set();
+            //preemptHandle.Reset();
         }
 
         public bool getPreemtedFlag()
@@ -392,14 +441,31 @@ namespace MyTaskScheduler
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        public int getCancellationTimeout()
+
+        public long getCancellationTimeout()
         {
             return cancellationTimeout;
         }
 
-        public void startCancellationTimer()
+
+        public void startStopwatch()
         {
-            cancleTokenSource.CancelAfter(cancellationTimeout);
+            timer.Start();
+        }
+
+        public void stopStopwatch()
+        {
+            timer.Stop();
+        }
+
+        public long getStopwatchValue()
+        {
+            return timer.ElapsedMilliseconds;
+        }
+
+        public DateTime getDeadline()
+        {
+            return deadline;
         }
 
     }

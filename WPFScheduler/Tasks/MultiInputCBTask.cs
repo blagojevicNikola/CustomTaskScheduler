@@ -16,18 +16,37 @@ namespace WPFScheduler.Tasks
 
         public MultiInputCBTask(string name, int priority, int degreeOfParallelism):base(name, priority, degreeOfParallelism)
         { }
+
+        public MultiInputCBTask(string name, int priority, int degreeOfParallelism, long cancellationTimeout) : base(name, priority, degreeOfParallelism, cancellationTimeout)
+        {
+
+        }
+
+        public MultiInputCBTask(string name, int priority, int degreeOfParallelism, DateTime deadline) : base(name, priority, degreeOfParallelism, degreeOfParallelism)
+        {
+
+        }
+
+        public MultiInputCBTask(string name, int priority, int degreeOfParallelism, long cancellationTimeout, DateTime deadline) : base(name, priority, degreeOfParallelism, cancellationTimeout, deadline)
+        {
+
+        }
+
         public override void algoritam()
         {
-            List<MyResource> inputImageList = new List<MyResource>();
+            int imagesHeightLength = 0;
+            List<Bitmap> inputImageList = new List<Bitmap>();
             for(int i = 0; i < resourceList.Count; i+=2)
             {
-                inputImageList.Add(resourceList[i]);
+                lockResourceByIndex(i);
+                Bitmap temp = new Bitmap(getResourceByIndex(i).getPath());
+                imagesHeightLength += temp.Height;
+                inputImageList.Add((Bitmap)temp.Clone());
+                unlockResourceByIndex(i);
             }
             ParallelOptions options = new ParallelOptions();
-            options.MaxDegreeOfParallelism = 2;
-            Parallel.ForEach(inputImageList, options, (l) => {
-                lockResourceByIndex(l.getId());
-                Bitmap image = new Bitmap(l.getPath());
+            options.MaxDegreeOfParallelism = getDegreeOfParallelism();
+            Parallel.ForEach(inputImageList, options, (image,state) => {
                 if (image != null)
                 {
                     BitmapData bd = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadWrite, image.PixelFormat);
@@ -48,6 +67,22 @@ namespace WPFScheduler.Tasks
                         //Console.WriteLine("Current line:{0}", currentLine);
                         for (int x = 0; x < widthInBytes; x = x + bytesPerPixel)
                         {
+
+                            if (paused)
+                            {
+                                pauseHandle.WaitOne();
+                            }
+
+                            if (cancleTokenSource.IsCancellationRequested)
+                            {
+                                state.Stop();
+                            }
+
+                            if(preempted)
+                            {
+                                preemptHandle.WaitOne();
+                            }
+
                             //int alpha = pixels[currentLine + x];
                             int oldBlue = pixels[currentLine + x];
                             int oldGreen = pixels[currentLine + x + 1];
@@ -84,15 +119,25 @@ namespace WPFScheduler.Tasks
                             pixels[currentLine + x + 1] = (byte)newPixel[1];
                             pixels[currentLine + x + 2] = (byte)newPixel[2];
                         }
+
+                       if(y%(imagesHeightLength/100)==0)
+                        {
+                            progressOfTask.Report(1);
+                        }
+
                     }
                     System.Runtime.InteropServices.Marshal.Copy(pixels, 0, ptrFirstPixel, pixels.Length);
                     image.UnlockBits(bd);
-                    string naziv = l.GetHashCode().ToString();
-                    image.Save(naziv + ".jpg");
                 }
             });
 
-            unlockAllResources();
+            for (int i = 1, j = 0; i < resourceList.Count; i += 2, j++)
+            {
+                lockResourceByIndex(i);
+                inputImageList[j].Save(getResourceByIndex(i).getPath());
+                Console.WriteLine("REsurs: {0}", getResourceByIndex(i).getPath());
+                unlockResourceByIndex(i);
+            }
         }
 
         private int[] help(byte[] array, int x, int y, int startX, int startY, int bytesPerPixel, int stride)

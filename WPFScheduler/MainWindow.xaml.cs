@@ -32,17 +32,20 @@ namespace WPFScheduler
         {
             InitializeComponent();
             Subscribers = new ObservableCollection<UserTask>();
-            UserTask a = new SingleInputCBTask("IME1", 1, 2);
-            UserTask b = new NewTask("IME2", 2, 1);
+            UserTask a = new NewTask("IME1", 2, 2,new DateTime(2022,8,8,14,48,5));
+            UserTask b = new NewTask("IME2", 3, 2,3000);
+            UserTask c = new NewTask("IME3", 3, 1);
+            UserTask d = new NewTask("IME4", 2, 1);
             //UserTask c = new NewTask("IME3", 3, 1);
             //MyResource r = new MyResource("fajl 1");
-            a.addResource(MyResource.getResourceByName(@"C:\Users\win7\Desktop\blurInput1.jpg"));
-            //b.addResource(MyResource.getResourceByName("fajl1"));
-            //c.addResource(MyResource.getResourceByName("fajl1"));
+            a.addResource(MyResource.getResourceByName("fajl1"));
+            b.addResource(MyResource.getResourceByName("fajl2"));
+            c.addResource(MyResource.getResourceByName("fajl1"));
             Subscribers.Add(a);
             Subscribers.Add(b);
-            //Subscribers.Add(c);
-            _scheduler = new Scheduler(2, 1, Scheduler.Mode.NON_PREEMPTIVE);
+            Subscribers.Add(c);
+            //Subscribers.Add(d);
+            _scheduler = new Scheduler(2, 2, Scheduler.Mode.PREEMPITVE, TaskScheduler.FromCurrentSynchronizationContext());
             _scheduler.ObsInQueue = new ObservableCollection<UserTask>();
             _scheduler.ObsActiveTasks = new ObservableCollection<UserTask>();
             Scheduler = _scheduler;

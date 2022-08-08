@@ -19,7 +19,7 @@ namespace MyTaskScheduler
         }
 
        
-        private TaskScheduler context = TaskScheduler.FromCurrentSynchronizationContext();
+        private TaskScheduler context;
         private List<UserTask> subscribedTasks = new List<UserTask>();
         private LinkedList<UserTask> tasksInQueue = new LinkedList<UserTask>();
         //private List<Thread> activeThreads = new List<Thread>();
@@ -32,6 +32,7 @@ namespace MyTaskScheduler
         private Thread controller;
         private volatile bool active = false;
         private readonly object activeThreadsCountLock = new object();
+
         public ObservableCollection<UserTask> ObsInQueue { get; set; }
         public ObservableCollection<UserTask> ObsActiveTasks { get; set; }
 
@@ -48,6 +49,20 @@ namespace MyTaskScheduler
             _maxConcurrentTasks = maxConcurrentTasks;  
             InitializeScheduler();
         }
+
+        public Scheduler(int maxDegreeOfParallelism, int maxConcurrentTasks, Mode mode, TaskScheduler context)
+        {
+            if (maxDegreeOfParallelism <= 0)
+            {
+                throw new ArgumentOutOfRangeException("Out of range!");
+            }
+            this.maxDegreeOfParallelism = maxDegreeOfParallelism;
+            this.mode = mode;
+            _maxConcurrentTasks = maxConcurrentTasks;
+            this.context = context;
+            InitializeScheduler();
+        }
+
 
         private void InitializeScheduler()
         {
@@ -80,7 +95,15 @@ namespace MyTaskScheduler
                         //        activeTasksCount--;
                         //    }
                         //}
-                        var tempList = activeTasks.Where((s) => s.UserTaskState == UserTask.TaskState.READY || s.UserTaskState == UserTask.TaskState.COMPLETED || s.UserTaskState == UserTask.TaskState.PREEMTED);
+                        foreach(UserTask u in activeTasks)
+                        {
+                            if(u.getCancellationTimeout() < u.getStopwatchValue() || u.getDeadline() < DateTime.Now)
+                            {
+                                u.cancleUserTask();
+                            }
+                        }
+
+                        var tempList = activeTasks.Where((s) => s.UserTaskState == UserTask.TaskState.COMPLETED || s.UserTaskState == UserTask.TaskState.PREEMTED);
                         // activeTasks.RemoveAll((s) => s.UserTaskState == UserTask.TaskState.READY || s.UserTaskState == UserTask.TaskState.COMPLETED || s.UserTaskState == UserTask.TaskState.PREEMTED || s.getPreemtedFlag() == true);
                         foreach(UserTask u in tempList.ToList())
                         {
@@ -149,9 +172,23 @@ namespace MyTaskScheduler
                             {
                                 Task t = new Task(() => ObsInQueue.Remove(candidate));
                                 t.Start(context);
-                                Console.WriteLine("OBRISANO_______");
+                                //Console.WriteLine("OBRISANO_______");
                                 tasksInQueue.RemoveFirst();
-                                runTask(candidate);
+                                //In case that candidate task was preempted, scheduler just resumes the thread that task is runned on
+                                if(candidate.UserTaskState == UserTask.TaskState.WAITING)
+                                {
+                                    activeTasks.Add(candidate);
+                                    Task dispatch = new Task(() => ObsActiveTasks.Add(candidate));
+                                    dispatch.Start(context);
+                                    activeTasksCount++;
+                                    activeThreadsCount += candidate.getDegreeOfParallelism();
+                                    candidate.continueTask();
+                                }
+                                //Else scheduler will start new thread for the candidate task
+                                else
+                                {
+                                    runTask(candidate);
+                                }
                             }
                         }
                     }
@@ -219,7 +256,7 @@ namespace MyTaskScheduler
         #region Check if task can be run on Scheduler (for both Scheduler modes)
         private bool canBeExecuted(UserTask t)
         {
-            if (t.UserTaskState != UserTask.TaskState.READY)
+            if (t.UserTaskState != UserTask.TaskState.READY && t.UserTaskState != UserTask.TaskState.WAITING)
             {
                 Console.WriteLine("Ime taska {0}", t.getName());
                 return false;
@@ -230,8 +267,12 @@ namespace MyTaskScheduler
             }
             else if (mode == Mode.PREEMPITVE)
             {
-                int? min = activeTasks.Min(a => a.getPriority());
-                if (min == null || min >= t.getPriority())
+                int min = -1;
+                if (activeTasks.Count > 0)
+                { 
+                    min = activeTasks.Min(a => a.getPriority());
+                }
+                if (min == -1 || min >= t.getPriority())
                 {
                     return false;
                 }
@@ -255,9 +296,10 @@ namespace MyTaskScheduler
                 }
                 //Console.WriteLine("Preempt task {0}", preemptCandidate.getName());
 
-                preemptCandidate.preemptUserTask();
+                
                 activeTasksCount--;
                 activeThreadsCount -= preemptCandidate.getDegreeOfParallelism();
+                preemptCandidate.preemptUserTask();
                 return true;
             }
             else
@@ -283,19 +325,19 @@ namespace MyTaskScheduler
                     lock (task)
                     {
                        task.UserTaskState = UserTask.TaskState.RUNNING;
+                        task.startStopwatch();
                     }
                     task.algoritam();
                     lock (task)
                     {
-                        if (task.getPreemtedFlag())
-                        {
-                            task.UserTaskState = UserTask.TaskState.PREEMTED;
-
-                        }
-                        else
-                        {
+                        //if (task.getPreemtedFlag())
+                        //{
+                        //    task.UserTaskState = UserTask.TaskState.PREEMTED;
+                        //}
+                        //else
+                        //{
                             task.UserTaskState = UserTask.TaskState.COMPLETED;
-                        }
+                        //}
                     }
                 }
                 finally

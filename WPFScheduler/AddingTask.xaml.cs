@@ -2,6 +2,7 @@
 using MyTaskScheduler;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -98,10 +99,34 @@ namespace WPFScheduler
                 //MyTaskScheduler.UserTask temp = new NewTask(nameTextBox.Text, int.Parse(prioTextBox.Text), int.Parse(coreNumTextBox.Text));
                 UserTask temp = null;
                 string val = (taskTypeComboBox.SelectedItem as ComboBoxItem).Content.ToString();
+                long timeLimit = -1;
+                DateTime deadline = new DateTime();
+                if (timeLimitTextBox.Text.Length > 0 && finishDateTextBox.Text.Length>0)
+                {
+                    timeLimit = long.Parse(timeLimitTextBox.Text);
+                    deadline = DateTime.Parse(finishDateTextBox.Text);
+                }
+                else if(timeLimitTextBox.Text.Length > 0)
+                {
+                    timeLimit = long.Parse(timeLimitTextBox.Text);
+                }
+                else if(finishDateTextBox.Text.Length>0)
+                {
+                    //DateTime.ParseExact(finishDateTextBox.Text, "yyyy/MM/dd hh:mm:ss", CultureInfo.InvariantCulture);
+                    deadline = DateTime.Parse(finishDateTextBox.Text);
+                }
+
                 switch (val)
                 {
                     case "CB(Single-Input)":
-                        temp = new SingleInputCBTask(nameTextBox.Text, int.Parse(prioTextBox.Text), int.Parse(coreNumTextBox.Text));
+                        if(timeLimit>0)
+                        {
+                            temp = new SingleInputCBTask(nameTextBox.Text, int.Parse(prioTextBox.Text), int.Parse(coreNumTextBox.Text), timeLimit);
+                        }
+                        else
+                        {
+                            temp = new SingleInputCBTask(nameTextBox.Text, int.Parse(prioTextBox.Text), int.Parse(coreNumTextBox.Text));
+                        }
                         handleInput(temp, 1);
                         break;
 
@@ -110,11 +135,32 @@ namespace WPFScheduler
                         handleInput(temp, 4);
                         break;
 
+                    case "Mock Task":
+                        if(timeLimit>0 && finishDateTextBox.Text.Length > 0)
+                        {
+                            temp = new NewTask(nameTextBox.Text, int.Parse(prioTextBox.Text), int.Parse(coreNumTextBox.Text), timeLimit, deadline);
+                        }
+                        else if(timeLimit>0)
+                        {
+                            temp = new NewTask(nameTextBox.Text, int.Parse(prioTextBox.Text), int.Parse(coreNumTextBox.Text), timeLimit);
+                        }
+                        else if(finishDateTextBox.Text.Length > 0)
+                        {
+                            temp = new NewTask(nameTextBox.Text, int.Parse(prioTextBox.Text), int.Parse(coreNumTextBox.Text), deadline);
+                        }
+                        else
+                        {
+                            temp = new NewTask(nameTextBox.Text, int.Parse(prioTextBox.Text), int.Parse(coreNumTextBox.Text));
+                        }
+                        break;
+
                     default:
                         break;
                 }
-
-            ((MainWindow)Application.Current.MainWindow).Subscribers.Add(temp);
+                if(temp!=null)
+                {
+                    ((MainWindow)Application.Current.MainWindow).Subscribers.Add(temp);
+                }
                 this.Close();
             }
         }
@@ -157,8 +203,8 @@ namespace WPFScheduler
                 {
                     continue;
                 }
-                temp.addResource(MyTaskScheduler.MyResource.getResourceByName(inputResourceTextBoxes[0].Text));
-                temp.addResource(MyTaskScheduler.MyResource.getResourceByName(outputResourceTextBoxes[0].Text));
+                temp.addResource(MyTaskScheduler.MyResource.getResourceByName(inputResourceTextBoxes[i].Text));
+                temp.addResource(MyTaskScheduler.MyResource.getResourceByName(outputResourceTextBoxes[i].Text));
             }
         }
 
@@ -172,6 +218,16 @@ namespace WPFScheduler
             if(!int.TryParse(prioTextBox.Text, out _) || !int.TryParse(coreNumTextBox.Text, out _))
             {
                 MessageBox.Show("Priority/NumOfCores not a number!");
+                return false;
+            }
+            if(timeLimitTextBox.Text.Length>0 && !int.TryParse(timeLimitTextBox.Text,out _))
+            {
+                MessageBox.Show("Time limit value is not valid!");
+                return false;
+            }
+            if(finishDateTextBox.Text.Length>0 && !DateTime.TryParse(finishDateTextBox.Text, out _))
+            {
+                MessageBox.Show("Deadline value is not valid!");
                 return false;
             }
             return true;

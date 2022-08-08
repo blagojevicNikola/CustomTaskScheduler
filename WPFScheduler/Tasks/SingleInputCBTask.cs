@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace WPFScheduler.Tasks
@@ -13,9 +14,26 @@ namespace WPFScheduler.Tasks
     {
 
         private int kernelDimension = 15;
+        private volatile bool available = true;
+        private readonly object availableLock = new object();
 
         public SingleInputCBTask(string name, int priority, int degreeOfParallelism) : base(name, priority, degreeOfParallelism)
         { }
+
+        public SingleInputCBTask(string name, int priority, int degreeOfParallelism, long cancellationTimeout):base(name, priority, degreeOfParallelism, cancellationTimeout)
+        {
+
+        }
+
+        public SingleInputCBTask(string name, int priority, int degreeOfParallelism, DateTime deadline) : base(name,priority,degreeOfParallelism,degreeOfParallelism)
+        {
+
+        }
+
+        public SingleInputCBTask(string name, int priority, int degreeOfParallelism, long cancellationTimeout, DateTime deadline) : base(name, priority, degreeOfParallelism, cancellationTimeout, deadline)
+        {
+
+        }
 
 
         public override void algoritam()
@@ -41,9 +59,10 @@ namespace WPFScheduler.Tasks
                 byte[] pixels = new byte[byteCount];
                 IntPtr ptrFirstPixel = bd.Scan0;
                 System.Runtime.InteropServices.Marshal.Copy(ptrFirstPixel, pixels, 0, pixels.Length);
+                unlockResourceByIndex(0);
                 int heightInPixels = bd.Height;
                 int widthInBytes = bd.Width * bytesPerPixel;
-                Parallel.For(0, heightInPixels, options, (y) =>
+                Parallel.For(0, heightInPixels, options, (y, state) =>
                 {
                     int currentLine = y * bd.Stride;
                     //Console.WriteLine("Current line:{0}", currentLine);
@@ -52,6 +71,36 @@ namespace WPFScheduler.Tasks
                         if(paused)
                         {
                             pauseHandle.WaitOne();
+                        }
+
+                        if(cancleTokenSource.IsCancellationRequested)
+                        {
+                            state.Stop();
+                        }
+
+                        if(preempted)
+                        {
+                            //List<int> indexList = null;
+                            //lock (availableLock)
+                            //{
+                            //    if (available)
+                            //    {
+                            //        available = false;
+                            //        indexList = getLockedResources().Select(r => r.getId()).ToList();
+                            //        unlockAllResources();
+                            //    }
+                            //}
+                            preemptHandle.WaitOne();
+                            //lock(availableLock)
+                            //{
+                            //    if(indexList!=null)
+                            //    {
+                            //        foreach(int i in indexList)
+                            //        {
+                            //            lockResourceByIndex(i);
+                            //        }
+                            //    }
+                            //}
                         }
 
                         //int alpha = pixels[currentLine + x];
@@ -103,18 +152,21 @@ namespace WPFScheduler.Tasks
                     }
                 });
 
+                lockResourceByIndex(0);
                 System.Runtime.InteropServices.Marshal.Copy(pixels, 0, ptrFirstPixel, pixels.Length);
                 image.UnlockBits(bd);
 
                 lockResourceByIndex(1);
 
                 image.Save(getResourceByIndex(1).getPath());
+                unlockResourceByIndex(1);
+                unlockResourceByIndex(0);
             }
             else
             {
+                unlockResourceByIndex(0);
                 Console.WriteLine("Nije pronadjena slika");
             }
-            unlockResourceByIndex(0);
         }
 
         private int[] help(byte[] array, int x, int y, int startX, int startY, int bytesPerPixel, int stride)

@@ -74,8 +74,8 @@ namespace MyTaskScheduler
 
         public void unlockResource(UserTask task)
         {
-            Monitor.Exit(monitorObject);
             removeOwnerTask();
+            Monitor.Exit(monitorObject);
         }
 
         private void setOwnerTask(UserTask task)

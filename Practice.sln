@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyTaskScheduler", "MyTaskSc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormsScheduler", "WinFormsScheduler\WinFormsScheduler.csproj", "{0F6773D8-AA9C-4C4C-9A49-9FD45EE9AA24}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerFileSystem", "SchedulerFileSystem\SchedulerFileSystem.csproj", "{1A559957-AF9F-4EE3-B883-E6BE947BA9F2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +50,10 @@ Global
 		{0F6773D8-AA9C-4C4C-9A49-9FD45EE9AA24}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F6773D8-AA9C-4C4C-9A49-9FD45EE9AA24}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F6773D8-AA9C-4C4C-9A49-9FD45EE9AA24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A559957-AF9F-4EE3-B883-E6BE947BA9F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A559957-AF9F-4EE3-B883-E6BE947BA9F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A559957-AF9F-4EE3-B883-E6BE947BA9F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A559957-AF9F-4EE3-B883-E6BE947BA9F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
