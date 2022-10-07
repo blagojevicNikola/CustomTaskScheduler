@@ -1,0 +1,12 @@
+C:\Users\win7\source\repos\Practice\SchedulerFileSystem\bin\Debug\SchedulerFileSystem.exe.config
+C:\Users\win7\source\repos\Practice\SchedulerFileSystem\bin\Debug\SchedulerFileSystem.exe
+C:\Users\win7\source\repos\Practice\SchedulerFileSystem\bin\Debug\SchedulerFileSystem.pdb
+C:\Users\win7\source\repos\Practice\SchedulerFileSystem\bin\Debug\DokanNet.dll
+C:\Users\win7\source\repos\Practice\SchedulerFileSystem\bin\Debug\de\DokanNet.resources.dll
+C:\Users\win7\source\repos\Practice\SchedulerFileSystem\bin\Debug\fr\DokanNet.resources.dll
+C:\Users\win7\source\repos\Practice\SchedulerFileSystem\bin\Debug\sv\DokanNet.resources.dll
+C:\Users\win7\source\repos\Practice\SchedulerFileSystem\obj\Debug\SchedulerFileSystem.csproj.AssemblyReference.cache
+C:\Users\win7\source\repos\Practice\SchedulerFileSystem\obj\Debug\SchedulerFileSystem.csproj.CoreCompileInputs.cache
+C:\Users\win7\source\repos\Practice\SchedulerFileSystem\obj\Debug\SchedulerFileSystem.csproj.CopyComplete
+C:\Users\win7\source\repos\Practice\SchedulerFileSystem\obj\Debug\SchedulerFileSystem.exe
+C:\Users\win7\source\repos\Practice\SchedulerFileSystem\obj\Debug\SchedulerFileSystem.pdb

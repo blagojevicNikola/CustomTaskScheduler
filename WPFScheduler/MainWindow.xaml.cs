@@ -28,12 +28,15 @@ namespace WPFScheduler
         public Scheduler _scheduler;
 
         public Scheduler Scheduler { get; set; }
+        public string Option { get; set; }
+        public string NumberOfCores { get; set; }
+        public string LevelOfParalelism { get; set; }
         public MainWindow()
         {
             InitializeComponent();
             Subscribers = new ObservableCollection<UserTask>();
-            UserTask a = new NewTask("IME1", 2, 2,new DateTime(2022,8,8,14,48,5));
-            UserTask b = new NewTask("IME2", 3, 2,3000);
+            UserTask a = new NewTask("IME1", 2, 2, new DateTime(2022, 8, 8, 14, 48, 5));
+            UserTask b = new NewTask("IME2", 3, 2, 3000);
             UserTask c = new NewTask("IME3", 3, 1);
             UserTask d = new NewTask("IME4", 2, 1);
             //UserTask c = new NewTask("IME3", 3, 1);
@@ -75,7 +78,7 @@ namespace WPFScheduler
            {
                 _scheduler.subscribeUserTask(u);
            }
-            Subscribers.Clear();
+           Subscribers.Clear();
         }
 
         private void pauseButton_Click(object sender, RoutedEventArgs e)
@@ -103,6 +106,24 @@ namespace WPFScheduler
         {
             if(!_scheduler.Active)
             {
+                if(Option.Contains("Non-Preemptive"))
+                {
+                    _scheduler.changeMode(Scheduler.Mode.NON_PREEMPTIVE);
+                }
+                else
+                {
+                    _scheduler.changeMode(Scheduler.Mode.PREEMPITVE);
+                }
+                if(string.IsNullOrEmpty(NumberOfCores) || string.IsNullOrEmpty(LevelOfParalelism))
+                {
+                    return;
+                }
+                if(!int.TryParse(NumberOfCores, out _) || !int.TryParse(LevelOfParalelism, out _))
+                {
+                    return;
+                }
+                _scheduler.setOptions(int.Parse(LevelOfParalelism), int.Parse(NumberOfCores));
+                Console.WriteLine("Ispis");
                 _scheduler.start();
             }
         }

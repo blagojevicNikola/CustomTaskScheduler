@@ -46,7 +46,8 @@ namespace MyTaskScheduler
             }
             this.maxDegreeOfParallelism = maxDegreeOfParallelism;
             this.mode = mode;
-            _maxConcurrentTasks = maxConcurrentTasks;  
+            _maxConcurrentTasks = maxConcurrentTasks;
+            context = null;
             InitializeScheduler();
         }
 
@@ -108,11 +109,14 @@ namespace MyTaskScheduler
                         foreach(UserTask u in tempList.ToList())
                         {
                             activeTasks.Remove(u);
-                            Task t = new Task(() =>
+                            if(context!=null)
                             {
-                                ObsActiveTasks.Remove(u);
-                            });
-                            t.Start(context);
+                                Task t = new Task(() =>
+                                {
+                                    ObsActiveTasks.Remove(u);
+                                });
+                                t.Start(context);
+                            }
                             if(u.UserTaskState==UserTask.TaskState.COMPLETED)
                             {
                                 removeNum += u.getDegreeOfParallelism();
@@ -122,8 +126,11 @@ namespace MyTaskScheduler
                             {
                                 u.resetUserTask();
                                 queueTask(u);
-                                Task dispatch = new Task(() => ObsInQueue.Add(u));
-                                dispatch.Start(context);
+                                if(context!=null)
+                                {
+                                    Task dispatch = new Task(() => ObsInQueue.Add(u));
+                                    dispatch.Start(context);
+                                }
                             }
                         }
                         //Task t = new Task(() => { 
@@ -154,8 +161,12 @@ namespace MyTaskScheduler
                             else
                             {
                                 queueTask(executeCandidate);
-                                Task t = new Task(() => ObsInQueue.Add(executeCandidate));
-                                t.Start(context);
+                                if(context!=null)
+                                {
+                                    Task t = new Task(() => ObsInQueue.Add(executeCandidate));
+                                    t.Start(context);
+                                }
+                                
                                 //ObsInQueue.Add(executeCandidate);
                             }
                         }
@@ -170,16 +181,22 @@ namespace MyTaskScheduler
                             UserTask candidate = tasksInQueue.First();
                             if (canBeExecuted(candidate))
                             {
-                                Task t = new Task(() => ObsInQueue.Remove(candidate));
-                                t.Start(context);
+                                if(context!=null)
+                                {
+                                    Task t = new Task(() => ObsInQueue.Remove(candidate));
+                                    t.Start(context);
+                                }
                                 //Console.WriteLine("OBRISANO_______");
                                 tasksInQueue.RemoveFirst();
                                 //In case that candidate task was preempted, scheduler just resumes the thread that task is runned on
                                 if(candidate.UserTaskState == UserTask.TaskState.WAITING)
                                 {
                                     activeTasks.Add(candidate);
-                                    Task dispatch = new Task(() => ObsActiveTasks.Add(candidate));
-                                    dispatch.Start(context);
+                                    if(context!=null)
+                                    {
+                                        Task dispatch = new Task(() => ObsActiveTasks.Add(candidate));
+                                        dispatch.Start(context);
+                                    }
                                     activeTasksCount++;
                                     activeThreadsCount += candidate.getDegreeOfParallelism();
                                     candidate.continueTask();
@@ -201,6 +218,10 @@ namespace MyTaskScheduler
         #region Start Task Scheduler
         public void start()
         {
+            if(controller.ThreadState == ThreadState.Stopped)
+            {
+                InitializeScheduler();
+            }
             active = true;
             controller.Start();
         }
@@ -312,8 +333,11 @@ namespace MyTaskScheduler
         #region Run task on a ThreadPool
         private void runTask(UserTask task)
         {
-            Task t = new Task(() => ObsActiveTasks.Add(task));
-            t.Start(context);
+            if(context!=null)
+            {
+                Task t = new Task(() => ObsActiveTasks.Add(task));
+                t.Start(context);
+            }
             activeTasks.Add(task);
             activeTasksCount++;
             activeThreadsCount += task.getDegreeOfParallelism();
@@ -348,6 +372,17 @@ namespace MyTaskScheduler
 
         }
         #endregion
+
+        public void changeMode(Mode m)
+        {
+            this.mode = m;
+        }
+
+        public void setOptions(int levelOfParallelism, int maxConcurrentTasks)
+        {
+            this.maxDegreeOfParallelism = levelOfParallelism;
+            this._maxConcurrentTasks = maxConcurrentTasks;
+        }
 
     }
 }

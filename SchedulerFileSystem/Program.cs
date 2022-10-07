@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DokanNet;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ namespace SchedulerFileSystem
     {
         static void Main(string[] args)
         {
+            new MyFileSystem().Mount("T://", DokanOptions.DebugMode | DokanOptions.StderrOutput);
         }
     }
 }

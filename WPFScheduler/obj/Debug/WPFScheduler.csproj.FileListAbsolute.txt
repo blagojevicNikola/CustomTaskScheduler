@@ -18,3 +18,6 @@ C:\Users\win7\source\repos\Practice\WPFScheduler\bin\Debug\MyTaskScheduler.pdb
 C:\Users\win7\source\repos\Practice\WPFScheduler\obj\Debug\WPFScheduler.csproj.CopyComplete
 C:\Users\win7\source\repos\Practice\WPFScheduler\obj\Debug\AddingTask.g.cs
 C:\Users\win7\source\repos\Practice\WPFScheduler\obj\Debug\AddingTask.baml
+C:\Users\win7\source\repos\Practice\WPFScheduler\obj\Debug\Resources\Styles.baml
+C:\Users\win7\source\repos\Practice\WPFScheduler\bin\Debug\FontAwesome.WPF.dll
+C:\Users\win7\source\repos\Practice\WPFScheduler\bin\Debug\FontAwesome.WPF.xml

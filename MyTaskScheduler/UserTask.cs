@@ -322,6 +322,7 @@ namespace MyTaskScheduler
         public void cancleUserTask()
         {
             cancleTokenSource.Cancel();
+            UserTaskState = TaskState.COMPLETED;
             timer.Stop();
         }
 

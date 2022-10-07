@@ -4,11 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFScheduler"
+        xmlns:fa ="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
         Background="#d3d3d3"
         WindowStartupLocation="CenterScreen"
         Title="MainWindow" Height="760" Width="1244"
         >
+
+    <Window.Resources>
+        <ResourceDictionary Source="/Resources/Styles.xaml"/>
+    </Window.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -227,17 +233,13 @@
                        ></Label>
                     <Button 
                         x:Name="addButton"
-                        Content="+"
                         HorizontalAlignment="Right"
                         Margin="140,0,0,0"
-                        Height="30"
-                        Width="30"
                         Click="addButton_Click"
-                        Background="white"
-                        Foreground="#292929"
-                        FontWeight="SemiBold"
-                        BorderBrush="Transparent"
-                        ></Button>
+                        Style="{StaticResource AddTasksButtonStyle}"
+                        >
+                        <fa:ImageAwesome Icon="Plus" Width="17" Height="17"/>
+                    </Button>
                 </Grid>
                 <ItemsControl x:Name="istemControl"
                               Width="auto"
@@ -353,15 +355,17 @@
                       FontSize="15"
                       FontWeight="Medium"
                       Background="white"
+                      SelectedIndex="0"
+                      SelectedValue="{Binding Option, Mode=OneWayToSource}"
                 >
                 <ComboBoxItem FontFamily="Ubuntu"
                               FontSize="15"
                               FontWeight="Medium"
-                              >Preemptive</ComboBoxItem>
+                              >Non-Preemptive</ComboBoxItem>
                 <ComboBoxItem FontFamily="Ubuntu"
                               FontSize="15"
                               FontWeight="Medium"
-                              >Non-Preemptive</ComboBoxItem>
+                              >Preemptive</ComboBoxItem>
             </ComboBox>
             
             <Label Content="Core Number"
@@ -383,43 +387,36 @@
                      Margin="20,10,0,0"
                      Width="80"
                      Height="35"
-                     Grid.Column="2"/>
+                     Grid.Column="2"
+                     Text="{Binding LevelOfParalelism, Mode=OneWayToSource}"/>
 
             <TextBox Grid.Row="1"
                      FontSize="17"
                      Margin="20,0,0,0"
                      Width="80"
                      Height="35"
-                     Grid.Column="2"/>
+                     Grid.Column="2"
+                     Text="{Binding NumberOfCores, Mode=OneWayToSource}"/>
 
             <Button x:Name="startSchedulerButton"
-                    Content="Start"
                     Grid.Column="3"
                     Grid.Row="0"
-                    Width="120"
-                    Height="40"
                     HorizontalAlignment="Left"
                     Margin="165,5,0,5"
-                    FontSize="20"
-                    FontWeight="Bold"
-                    Background="White"
-                    BorderBrush="Transparent"
+                    Style="{StaticResource ManageButtonStyle}"
                     Click="startSchedulerButton_Click">
-                
+                <Button.Content>
+                    Start
+                </Button.Content>
             </Button>
 
             <Button x:Name="stopSchedulerButton"
                     Content="Stop"
                     Grid.Column="3"
                     Grid.Row="1"
-                    Width="120"
-                    Height="40"
+                    Style="{StaticResource StopButtonStyle}"
                     HorizontalAlignment="Left"
                     Margin="165,5,0,5"
-                    FontSize="20"
-                    FontWeight="Bold"
-                    Background="White"
-                    BorderBrush="Transparent"
                     Click="stopSchedulerButton_Click">
 
             </Button>
@@ -430,12 +427,7 @@
                     Grid.Column="4"
                     Grid.Row= "0"
                     Margin="0,0,30,5"
-                    Width="110"
-                    Height="30"
-                    FontSize="15"
-                    Background="white"
-                    Foreground="#292929"
-                    FontWeight="SemiBold"
+                    Style="{StaticResource RunAllTasksButtonStyle}"
                     Click="runButton_Click"
                     BorderBrush="Transparent"
                     ></Button>
