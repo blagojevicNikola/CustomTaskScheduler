@@ -19,7 +19,7 @@ namespace SchedulerTest
 
         }
 
-        public MockTask(string name, int priority, int degreeOfParallelism, DateTime deadline) : base(name, priority, degreeOfParallelism, degreeOfParallelism)
+        public MockTask(string name, int priority, int degreeOfParallelism, DateTime deadline) : base(name, priority, degreeOfParallelism, deadline)
         {
 
         }

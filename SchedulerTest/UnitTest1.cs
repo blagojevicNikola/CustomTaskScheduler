@@ -119,6 +119,19 @@ namespace SchedulerTest
         [TestMethod]
         public void TestDeadlineOfTask()
         {
+            MockTask task = new MockTask("Task 1", 1, 1, DateTime.Now.AddSeconds(5));
+            Scheduler scheduler = new Scheduler(1, 1, Scheduler.Mode.NON_PREEMPTIVE);
+            scheduler.start();
+            scheduler.subscribeUserTask(task);
+            Thread.Sleep(500);
+            Assert.AreEqual(task.UserTaskState, UserTask.TaskState.RUNNING);
+            Thread.Sleep(6000);
+            Assert.AreEqual(task.UserTaskState, UserTask.TaskState.COMPLETED);
+            scheduler.stop();
+        }
+
+        public void Test()
+        {
 
         }
     }
