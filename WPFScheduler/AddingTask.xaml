@@ -8,6 +8,11 @@
         Title="AddingTask" Height="500" Width="600"
         WindowStartupLocation="CenterScreen"
         Background="#ededed">
+
+    <Window.Resources>
+        <ResourceDictionary Source="/Resources/Styles.xaml"/>
+    </Window.Resources>
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
@@ -29,6 +34,7 @@
                     Grid.Row="0">
                 <Label Content="Name"
                    Margin="20,0,0,0"
+                   Padding="0"
                    FontFamily="Ubuntu"
                    FontSize="15"
                    HorizontalAlignment="Left"
@@ -46,6 +52,7 @@
                     Grid.Column="0"
                     Grid.Row="1">
                 <Label Content="Priority"
+                   Padding="0"
                    Margin="20,0,0,0"
                    FontFamily="Ubuntu"
                    FontSize="15"/>
@@ -62,6 +69,7 @@
                     Grid.Column="0"
                     Grid.Row="2">
                 <Label Content="Number of cores"
+                   Padding="0"
                    Margin="20,0,0,0"
                    FontFamily="Ubuntu"
                    FontSize="15"/>
@@ -77,7 +85,8 @@
             <StackPanel Margin="0,15,0,0"
                     Grid.Column="0"
                     Grid.Row="3">
-                <Label Content="Date/time execution"
+                <Label Content="Deadline"
+                   Padding="0"
                    Margin="20,0,0,0"
                    FontFamily="Ubuntu"
                    FontSize="15"/>
@@ -93,7 +102,8 @@
             <StackPanel Margin="0,15,0,0"
                     Grid.Column="0"
                     Grid.Row="4">
-                <Label Content="Time limit execution"
+                <Label Content="Time limit"
+                   Padding="0"
                    Margin="20,0,0,0"
                    FontFamily="Ubuntu"
                    FontSize="15"/>
@@ -117,6 +127,7 @@
                         Grid.Row="0"
                         Margin="0,15,0,0">
                 <Label Content="Task type"
+                   Padding="0"
                    Margin="20,0,0,0"
                    FontFamily="Ubuntu"
                    FontSize="15"
@@ -155,20 +166,14 @@
             </Grid>
 
             <Button x:Name="addButton"
-                Grid.Row="2"
-                Height="40"
-                Width="80"
+                Grid.Row="2"              
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
                 Margin="0,0,10,10"
-                Content="Add"
-                FontSize="18"
-                HorizontalContentAlignment="Center"
-                VerticalContentAlignment="Center"
-                Click="addButton_Click"
-                Foreground="#292929"
+                Content="Add"                               
+                Click="addButton_Click"               
                 FontWeight="SemiBold"
-                Background="white"
+                Style="{StaticResource ManageButtonStyle}"
             ></Button>
 
         </Grid>

@@ -19,7 +19,7 @@ namespace SchedulerTest
 
         }
 
-        public MockTaskWithResource(string name, int priority, int degreeOfParallelism, DateTime deadline) : base(name, priority, degreeOfParallelism, degreeOfParallelism)
+        public MockTaskWithResource(string name, int priority, int degreeOfParallelism, DateTime deadline) : base(name, priority, degreeOfParallelism, deadline)
         {
 
         }
@@ -76,7 +76,7 @@ namespace SchedulerTest
                     Console.WriteLine("Preemptovan sam");
                     preemptHandle.WaitOne();
                 }
-                //lockResourceByIndex(0);
+                lockResourceByIndex(0);
                 Console.WriteLine("Task {0} | Prioritet {1} prije zakljucavanja!", name, priority, Thread.CurrentThread.ManagedThreadId);
                 //lockResourceByIndex(0);
                 //lockResourceByIndex(1);
@@ -84,7 +84,7 @@ namespace SchedulerTest
                 Thread.Sleep(2000);
                 Console.WriteLine("Task {0} | Prioritet {1} se izvrsava na Threadu: {2}", name, priority, Thread.CurrentThread.ManagedThreadId);
                 //unlockResourceByIndex(1);
-                //unlockResourceByIndex(0);
+                unlockResourceByIndex(0);
                 progressOfTask.Report((int)(100 / 7));
             }
             Console.WriteLine("-----KRAJ TASKA {0}-----", name); ;

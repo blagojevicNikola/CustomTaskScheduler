@@ -122,4 +122,36 @@
         </Style.Triggers>
     </Style>
 
+    <Style x:Key="AddButtonStyle" TargetType="{x:Type Button}">
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="Width" Value="120"/>
+        <Setter Property="Background" Value="{StaticResource ButtonColor}"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Grid>
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="15">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="3" ShadowDepth="5" Opacity="0.24"/>
+                            </Border.Effect>
+                        </Border>
+                        <ContentPresenter Content ="{TemplateBinding Button.Content}" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center"  VerticalAlignment="Center"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource ButtonHoverColor}"/>
+            </Trigger>
+            <DataTrigger Binding="{Binding Scheduler.Active}" Value="False">
+                <Setter Property="IsEnabled" Value="True"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
 </ResourceDictionary>

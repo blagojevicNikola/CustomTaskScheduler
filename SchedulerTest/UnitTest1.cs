@@ -56,7 +56,7 @@ namespace SchedulerTest
             Scheduler scheduler = new Scheduler(2, 2, Scheduler.Mode.NON_PREEMPTIVE);
             scheduler.start();
             scheduler.subscribeUserTask(task);
-            Thread.Sleep(18000);
+            Thread.Sleep(10000);
             Assert.AreEqual(task.UserTaskState, UserTask.TaskState.COMPLETED);
             scheduler.stop();
         }
@@ -130,9 +130,46 @@ namespace SchedulerTest
             scheduler.stop();
         }
 
-        public void Test()
+        [TestMethod]
+        public void TestPriorityInheritenceProtocol()
         {
+            MockTaskWithResource task1 = new MockTaskWithResource("Task 1", 1, 1);
+            MockTaskWithResource task2 = new MockTaskWithResource("Task 2", 2, 1);
+            task1.addResource(MyResource.getResourceByName("Resurs1"));
+            task2.addResource(MyResource.getResourceByName("Resurs1"));
+            Scheduler scheduler = new Scheduler(1, 1, Scheduler.Mode.PREEMPITVE);
+            
+            Assert.AreEqual(task2.Priority, 2);
+            scheduler.start();
+            Thread.Sleep(500);
+            scheduler.subscribeUserTask(task1);
+            Assert.AreEqual(task1.Priority, 1);
+            Thread.Sleep(1500);
+            scheduler.subscribeUserTask(task2);
+            Thread.Sleep(1000);
+            Assert.AreEqual(task1.Priority, 2);
+            scheduler.stop();
+        }
 
+        [TestMethod]
+        public void TestDeadlockAvoidance()
+        {
+            MockTaskMultipleResources task1 = new MockTaskMultipleResources("Task 1", 1, 1);
+            MockTaskMultipleResources task2 = new MockTaskMultipleResources("Task 2", 1, 1);
+            Scheduler scheduler = new Scheduler(2, 2, Scheduler.Mode.NON_PREEMPTIVE);
+            task1.addResource(MyResource.getResourceByName("Resurs1"));
+            task1.addResource(MyResource.getResourceByName("Resurs2"));
+            task2.addResource(MyResource.getResourceByName("Resurs2"));
+            task2.addResource(MyResource.getResourceByName("Resurs1"));
+            scheduler.start();
+            Assert.AreEqual(task1.UserTaskState, UserTask.TaskState.READY);
+            Assert.AreEqual(task2.UserTaskState, UserTask.TaskState.READY);
+            scheduler.subscribeUserTask(task1);
+            scheduler.subscribeUserTask(task2);
+            Thread.Sleep(8000);
+            Assert.AreEqual(task1.UserTaskState, UserTask.TaskState.COMPLETED);
+            Assert.AreEqual(task2.UserTaskState, UserTask.TaskState.COMPLETED);
+            scheduler.stop();
         }
     }
 }

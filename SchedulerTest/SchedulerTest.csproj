@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MockTask.cs" />
+    <Compile Include="MockTaskMultipleResources.cs" />
     <Compile Include="MockTaskWithResource.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

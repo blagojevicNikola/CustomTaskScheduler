@@ -8,27 +8,26 @@ using System.Threading.Tasks;
 
 namespace SchedulerTest
 {
-    public class MockTask : UserTask
+    public class MockTaskMultipleResources : UserTask
     {
-        public MockTask(string name, int priority, int degreeOfParallelism) : base(name, priority, degreeOfParallelism)
+        public MockTaskMultipleResources(string name, int priority, int degreeOfParallelism) : base(name, priority, degreeOfParallelism)
         {
         }
 
-        public MockTask(string name, int priority, int degreeOfParallelism, long cancellationTimeout) : base(name, priority, degreeOfParallelism, cancellationTimeout)
-        {
-
-        }
-
-        public MockTask(string name, int priority, int degreeOfParallelism, DateTime deadline) : base(name, priority, degreeOfParallelism, deadline)
+        public MockTaskMultipleResources(string name, int priority, int degreeOfParallelism, long cancellationTimeout) : base(name, priority, degreeOfParallelism, cancellationTimeout)
         {
 
         }
 
-        public MockTask(string name, int priority, int degreeOfParallelism, long cancellationTimeout, DateTime deadline) : base(name, priority, degreeOfParallelism, cancellationTimeout, deadline)
+        public MockTaskMultipleResources(string name, int priority, int degreeOfParallelism, DateTime deadline) : base(name, priority, degreeOfParallelism, deadline)
         {
 
         }
 
+        public MockTaskMultipleResources(string name, int priority, int degreeOfParallelism, long cancellationTimeout, DateTime deadline) : base(name, priority, degreeOfParallelism, cancellationTimeout, deadline)
+        {
+
+        }
         public override void algoritam()
         {
             Console.WriteLine("=====TASK {0} POCINJE=====", base.getName());
@@ -61,7 +60,7 @@ namespace SchedulerTest
             //      progressOfTask.Report((int)(100 / 15));
             //  });
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 3; i++)
             {
                 if (paused)
                 {
@@ -76,15 +75,15 @@ namespace SchedulerTest
                     Console.WriteLine("Preemptovan sam");
                     preemptHandle.WaitOne();
                 }
-                //lockResourceByIndex(0);
+                lockResourceByIndex(0);
                 Console.WriteLine("Task {0} | Prioritet {1} prije zakljucavanja!", name, priority, Thread.CurrentThread.ManagedThreadId);
-                //lockResourceByIndex(0);
-                //lockResourceByIndex(1);
+                lockResourceByIndex(0);
+                lockResourceByIndex(1);
                 //Console.WriteLine("Task {0} je zakljucao resurs!", name);
-                Thread.Sleep(2000);
+                Thread.Sleep(1000);
                 Console.WriteLine("Task {0} | Prioritet {1} se izvrsava na Threadu: {2}", name, priority, Thread.CurrentThread.ManagedThreadId);
-                //unlockResourceByIndex(1);
-                //unlockResourceByIndex(0);
+                unlockResourceByIndex(1);
+                unlockResourceByIndex(0);
                 progressOfTask.Report((int)(100 / 7));
             }
             Console.WriteLine("-----KRAJ TASKA {0}-----", name); ;
