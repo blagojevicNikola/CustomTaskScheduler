@@ -80,16 +80,5 @@ namespace Practice
 
             Console.ReadLine();
         }
-
-
-        void func(int a)
-        {
-            while (true)
-            {
-                Console.WriteLine("Izvrsava se na thread-u {0}", a);
-               
-                Thread.Sleep(2000);
-            }
-        }
     }
 }

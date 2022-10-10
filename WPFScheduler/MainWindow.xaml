@@ -114,45 +114,39 @@
                                         x:Name="resumeButton"
                                         HorizontalAlignment="Right"
                                         Margin="0,0,5,0"
-                                        Height="20"
-                                        Width="20"
-                                        Content="R"
+                                        Style="{StaticResource TaskButtonStyle}"
                                         FontSize="15"
                                         Padding="0"
                                         HorizontalContentAlignment="Center"
                                         VerticalContentAlignment="Center"
                                         Click="resumeButton_Click">
-
+                                    <fa:ImageAwesome Icon="Play" Width="11" Height="11"/>
                                 </Button>
 
                                 <Button Grid.Column="5"
                                         x:Name="pauseButton"
                                         HorizontalAlignment="Right"
                                         Margin="0,0,5,0"
-                                        Height="20"
-                                        Width="20"
-                                        Content="P"
+                                        Style="{StaticResource TaskButtonStyle}"
                                         FontSize="15"
                                         Padding="0"
                                         HorizontalContentAlignment="Center"
                                         VerticalContentAlignment="Center"
                                         Click="pauseButton_Click">
-
+                                    <fa:ImageAwesome Icon="Pause" Width="11" Height="11"/>
                                 </Button>
 
                                 <Button Grid.Column="6"
                                         x:Name="cancleButton"
                                         HorizontalAlignment="Right"
                                         Margin="0,0,5,0"
-                                        Height="20"
-                                        Width="20"
-                                        Content="II"
+                                        Style="{StaticResource TaskButtonStyle}"
                                         FontSize="15"
                                         Padding="0"
                                         HorizontalContentAlignment="Center"
                                         VerticalAlignment="Center"
                                         Click="cancleButton_Click">
-                                   
+                                    <fa:ImageAwesome Icon="Close" Width="11" Height="11"/>
                                 </Button>
                                 
                             </Grid>
@@ -292,10 +286,9 @@
                                     <Run Text="{Binding DegreeOfParallelism, FallbackValue=1}"/>
                                     <Run Text=")"/>
                                 </TextBlock>
-                                
-                                <Button Content=">"
-                                        Width="20"
-                                        Height="20"
+
+                                <Button 
+                                        Style="{StaticResource TaskButtonStyle}"
                                         Grid.Column="3"
                                         Margin="0,0,10,0"
                                         HorizontalAlignment="Right"
@@ -303,7 +296,9 @@
                                         Background="White"
                                         Foreground="Green"
                                         FontWeight="Bold"
-                                        />
+                                        >
+                                    <fa:ImageAwesome Icon="Play" Width="11" Height="11"/>
+                                </Button>
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

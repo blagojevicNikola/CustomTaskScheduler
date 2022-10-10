@@ -11,7 +11,7 @@ namespace SchedulerFileSystem
     {
         static void Main(string[] args)
         {
-            new MyFileSystem().Mount("T://", DokanOptions.DebugMode | DokanOptions.StderrOutput);
+            new MyFileSystem().Mount("L:\\", DokanOptions.DebugMode | DokanOptions.StderrOutput);
         }
     }
 }

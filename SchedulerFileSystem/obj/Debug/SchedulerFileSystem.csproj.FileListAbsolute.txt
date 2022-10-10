@@ -10,3 +10,5 @@ C:\Users\win7\source\repos\Practice\SchedulerFileSystem\obj\Debug\SchedulerFileS
 C:\Users\win7\source\repos\Practice\SchedulerFileSystem\obj\Debug\SchedulerFileSystem.csproj.CopyComplete
 C:\Users\win7\source\repos\Practice\SchedulerFileSystem\obj\Debug\SchedulerFileSystem.exe
 C:\Users\win7\source\repos\Practice\SchedulerFileSystem\obj\Debug\SchedulerFileSystem.pdb
+C:\Users\win7\source\repos\Practice\SchedulerFileSystem\bin\Debug\MyTaskScheduler.dll
+C:\Users\win7\source\repos\Practice\SchedulerFileSystem\bin\Debug\MyTaskScheduler.pdb

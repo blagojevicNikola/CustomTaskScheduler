@@ -42,12 +42,14 @@ namespace WPFScheduler
                 Label outDescription = new Label();
                 StackPanel helpPanel = new StackPanel();
                 helpPanel.Orientation = Orientation.Horizontal;
-                inDescription.Margin = new Thickness(20, 10, 0, 0);
+                inDescription.Margin = new Thickness(20, 0, 0, 0);
                 inDescription.FontSize = 15;
+                inDescription.Padding = new Thickness(0);
                 inDescription.Content = "Input " + (i + 1);
+                outDescription.Padding = new Thickness(0);
                 outDescription.Content = "Output " + (i + 1);
                 outDescription.FontSize = 15;
-                outDescription.Margin = new Thickness(20, 10, 0, 0);
+                outDescription.Margin = new Thickness(20, 0, 0, 0);
                 TextBox inputResource = new TextBox();
                 inputPanel.SetValue(Grid.RowProperty, i);
                 inputPanel.Orientation = Orientation.Vertical;
@@ -119,9 +121,17 @@ namespace WPFScheduler
                 switch (val)
                 {
                     case "CB(Single-Input)":
-                        if(timeLimit>0)
+                        if(timeLimit>0 && finishDateTextBox.Text.Length>0)
                         {
-                            temp = new SingleInputCBTask(nameTextBox.Text, int.Parse(prioTextBox.Text), int.Parse(coreNumTextBox.Text), timeLimit);
+                            temp = new SingleInputCBTask(nameTextBox.Text, int.Parse(prioTextBox.Text), int.Parse(coreNumTextBox.Text), timeLimit, deadline);
+                        }
+                        else if(timeLimit>0)
+                        {
+                            temp = new SingleInputCBTask(nameTextBox.Text, int.Parse(prioTextBox.Text), int.Parse(coreNumTextBox.Text),timeLimit);
+                        }
+                        else if(finishDateTextBox.Text.Length>0)
+                        {
+                            temp = new SingleInputCBTask(nameTextBox.Text, int.Parse(prioTextBox.Text), int.Parse(coreNumTextBox.Text), deadline);
                         }
                         else
                         {
@@ -131,7 +141,22 @@ namespace WPFScheduler
                         break;
 
                     case "CB(Multi-Input)":
-                        temp = new MultiInputCBTask(nameTextBox.Text, int.Parse(prioTextBox.Text), int.Parse(coreNumTextBox.Text));
+                        if(timeLimit>0 && finishDateTextBox.Text.Length>0)
+                        {
+                            temp = new MultiInputCBTask(nameTextBox.Text, int.Parse(prioTextBox.Text), int.Parse(coreNumTextBox.Text), timeLimit, deadline);
+                        }
+                        else if(timeLimit>0)
+                        {
+                            temp = new MultiInputCBTask(nameTextBox.Text, int.Parse(prioTextBox.Text), int.Parse(coreNumTextBox.Text), timeLimit);
+                        }
+                        else if(finishDateTextBox.Text.Length>0)
+                        {
+                            temp = new MultiInputCBTask(nameTextBox.Text, int.Parse(prioTextBox.Text), int.Parse(coreNumTextBox.Text), deadline);
+                        }
+                        else
+                        {
+                            temp = new MultiInputCBTask(nameTextBox.Text, int.Parse(prioTextBox.Text), int.Parse(coreNumTextBox.Text));
+                        }
                         handleInput(temp, 4);
                         break;
 
